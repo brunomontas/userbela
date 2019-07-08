@@ -43,10 +43,37 @@ class ChatScreen extends Component {
 
     chatManager
       .connect()
+      .then(currentUser =>{
+        this.setState({ currentUser })
+        currentUser.createRoom({
+          id: currentUser.name,
+          name: currentUser.name,
+          private: false,
+          addUserIds: ['Bela_adormecida'],
+          
+        }
+        ).then(room => {
+          console.log(`Created room called ${room.name}`)
+        })
+        .catch(err => {
+          console.log(`Error creating room ${err}`)
+        })
+        return currentUser
+      })
+      .then(currentUser =>{
+        currentUser.joinRoom({ roomId: '21534362' })
+      .then(room => {
+        console.log(`Joined room with ID: ${room.id}`)
+      })
+      .catch(err => {
+        console.log(`Error joining room ${'21534362'}: ${err}`)
+      })
+        return currentUser
+      })
       .then(currentUser => {
         this.setState({ currentUser })
         return currentUser.subscribeToRoom({
-          roomId: "21534362",
+          roomId: currentUser.name,
           messageLimit: 100,
           hooks: {
             onMessage: message => {
@@ -71,6 +98,7 @@ class ChatScreen extends Component {
         })
       })
       .then(currentRoom => {
+        console.log("im'here lalalalla")
         this.setState({ currentRoom })
        })
       .catch(error => console.error('error', error))
